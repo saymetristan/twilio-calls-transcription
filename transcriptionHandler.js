@@ -8,29 +8,16 @@ const twilio = require('twilio');
 function handleTranscription(req) {
   const twiml = new twilio.twiml.VoiceResponse();
   
-  // Mensaje de bienvenida
-  twiml.say({ language: 'es-ES', voice: 'Polly.Conchita' }, 
-    'Hola, esta llamada será transcrita. Por favor, hable después del tono.');
-  
-  // Breve pausa
-  twiml.pause({ length: 1 });
-  
-  // Beep para indicar inicio de grabación
-  twiml.play({ digits: 'w9' });
-  
-  // Grabar y transcribir la llamada
+  // Grabar y transcribir la llamada sin mensajes previos
   twiml.record({
     action: '/transcription',
     transcribe: true,
     transcribeCallback: '/transcription',
-    maxLength: 300, // Máximo 5 minutos
-    playBeep: true,
-    timeout: 5
+    maxLength: 600, // Extendido a 10 minutos
+    playBeep: false, // Sin beep
+    timeout: 10,     // Más tiempo antes de terminar en silencio
+    trim: 'trim-silence' // Recorta silencios
   });
-  
-  // Mensaje de despedida
-  twiml.say({ language: 'es-ES', voice: 'Polly.Conchita' }, 
-    'Gracias por su mensaje. Adiós.');
   
   return twiml;
 }

@@ -32,22 +32,33 @@ app.post('/call', (req, res) => {
 
 // Endpoint para recibir transcripciones
 app.post('/transcription', (req, res) => {
+  // Registrar todos los datos recibidos para depuración
+  console.log('Datos de transcripción recibidos:', JSON.stringify(req.body));
+  
   const transcriptionText = req.body.TranscriptionText;
   const callSid = req.body.CallSid;
+  const recordingUrl = req.body.RecordingUrl;
   
-  if (transcriptionText) {
+  if (transcriptionText && transcriptionText.trim() !== '') {
     const now = new Date();
     const fileName = `${now.toISOString().replace(/:/g, '-')}_${callSid}.md`;
     const filePath = path.join(transcriptionsDir, fileName);
     
     const fileContent = `# Transcripción de llamada: ${callSid}\n\n` +
                        `Fecha: ${now.toLocaleString()}\n\n` +
+                       `RecordingUrl: ${recordingUrl || 'No disponible'}\n\n` +
                        `## Contenido\n\n${transcriptionText}\n`;
     
     fs.writeFileSync(filePath, fileContent);
     console.log(`Transcripción guardada en: ${filePath}`);
   } else {
     console.log(`No se pudo obtener la transcripción para la llamada: ${callSid}`);
+    // Guardar un archivo de error para referencia
+    const now = new Date();
+    const fileName = `${now.toISOString().replace(/:/g, '-')}_${callSid}_error.md`;
+    const filePath = path.join(transcriptionsDir, fileName);
+    
+    fs.writeFileSync(filePath, `# Error en transcripción: ${callSid}\n\nFecha: ${now.toLocaleString()}\n\nDatos recibidos: ${JSON.stringify(req.body)}\n`);
   }
   
   res.sendStatus(200);
