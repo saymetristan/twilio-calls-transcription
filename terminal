@@ -1,0 +1,5 @@
+mkdir twilio-transcriber
+cd twilio-transcriber
+npm init -y
+npm install express body-parser dotenv twilio
+touch .env index.js README.md 
