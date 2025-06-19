@@ -8,15 +8,15 @@ const twilio = require('twilio');
 function handleTranscription(req) {
   const twiml = new twilio.twiml.VoiceResponse();
   
-  // Grabar y transcribir la llamada sin mensajes previos
+  // Grabar y transcribir la llamada
   twiml.record({
-    action: '/transcription',
+    action: '/recording-complete',
     transcribe: true,
-    transcribeCallback: '/transcription',
-    maxLength: 600, // Extendido a 10 minutos
-    playBeep: false, // Sin beep
-    timeout: 10,     // Más tiempo antes de terminar en silencio
-    trim: 'trim-silence' // Recorta silencios
+    transcribeCallback: '/transcription-callback',
+    maxLength: 600,
+    playBeep: false,
+    timeout: 10,
+    trim: 'trim-silence'
   });
   
   return twiml;
